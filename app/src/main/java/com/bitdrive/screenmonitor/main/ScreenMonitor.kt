@@ -1,8 +1,11 @@
-package com.bitdrive.screenmonitor
+package com.bitdrive.screenmonitor.main
 
 import android.app.Application
 import android.app.NotificationManager
+import com.bitdrive.screenmonitor.utils.NotificationCentral
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class ScreenMonitor : Application() {
 
     override fun onCreate() {

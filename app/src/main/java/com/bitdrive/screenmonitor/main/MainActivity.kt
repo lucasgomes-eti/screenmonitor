@@ -1,4 +1,4 @@
-package com.bitdrive.screenmonitor
+package com.bitdrive.screenmonitor.main
 
 import android.Manifest
 import android.app.AppOpsManager
@@ -18,22 +18,29 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
+import com.bitdrive.screenmonitor.services.TimerService
+import com.bitdrive.screenmonitor.ui.composables.Dashboard
 import com.bitdrive.screenmonitor.ui.theme.ScreenMonitorTheme
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var usageStatsManager: UsageStatsManager
+
+    @Inject
+    lateinit var appOpsManager: AppOpsManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +70,6 @@ class MainActivity : ComponentActivity() {
 
         val appInfoAndStats = mutableStateMapOf<ApplicationInfo, UsageStats>()
 
-        val usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.HOUR_OF_DAY, 0)
 
@@ -86,7 +92,6 @@ class MainActivity : ComponentActivity() {
 
         val requestAppUsagePermissionLauncher = registerForActivityResult(RequestUsageAccessPermission()) { queryUsageStats() }
 
-        val appOpsManager = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
         val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             appOpsManager.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), packageName)
         } else {
@@ -107,19 +112,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ScreenMonitorTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    LazyColumn() {
-                        appInfoAndStats.forEach { (appInfo, usageStats) ->
-                            item {
-                                Text(text = "${appInfo.loadLabel(packageManager)} - ${DateUtils.formatElapsedTime(usageStats.totalTimeInForeground / 1_000)}")
-                            }
-                        }
-                    }
-                }
+                Dashboard(appInfoAndStats = appInfoAndStats)
             }
         }
     }

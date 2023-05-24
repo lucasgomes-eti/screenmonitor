@@ -1,4 +1,4 @@
-package com.bitdrive.screenmonitor
+package com.bitdrive.screenmonitor.utils
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -6,6 +6,7 @@ import android.content.Context
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.bitdrive.screenmonitor.R
 
 object NotificationCentral {
 

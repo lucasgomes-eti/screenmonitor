@@ -1,4 +1,4 @@
-package com.bitdrive.screenmonitor
+package com.bitdrive.screenmonitor.services
 
 import android.app.Notification.CATEGORY_STATUS
 import android.app.PendingIntent
@@ -6,6 +6,9 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import com.bitdrive.screenmonitor.utils.NotificationCentral
+import com.bitdrive.screenmonitor.R
+import com.bitdrive.screenmonitor.main.MainActivity
 
 class TimerService : Service() {
 
